@@ -1,0 +1,8 @@
+requests
+datetime
+pandas
+numpy
+eaborn
+prophet
+streamlit
+plotly
