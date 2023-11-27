@@ -4,13 +4,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.metrics import mean_absolute_percentage_error
 from prophet import Prophet
-from prophet.diagnostics import cross_validation, performance_metrics
-from prophet.plot import plot_cross_validation_metric
 import streamlit as st
 from plotly import graph_objects as go
 import plotly.express as px
+from prophet.plot import plot_plotly
 
 # API params
 today = int(datetime.datetime.now().timestamp())
@@ -30,7 +28,7 @@ def cleaning(df):
     df['Timestamp'] = df['Date']
     df.drop(columns=['Date'], inplace=True)
     df.rename(columns={'Timestamp': 'Date'}, inplace=True)
-    df['Date']=pd.to_datetime(df['Date'])
+    df['Date']=pd.to_datetime(df['Date'], format="%Y-%m-%d")
     return df
 
 # Plot raw data function
@@ -45,5 +43,37 @@ def plot_raw(df):
             type="date"
         )
     )
+    return fig
+
+# Train & Test split
+def train_test(df):
+    '''Returns a train and test df (the train percentage will be 90% of the original data) in the needed format for prophet'''
+    df.rename(columns={'Date': 'ds',
+                  'Price': 'y'}, inplace=True)
+
+    train_index = int(0.9*len(df))
+    train = df.iloc[:train_index]
+    test = df.iloc[train_index:]
+    return train, test
+
+# Instantiate and train model
+def model_forecast(train_df, test_df):
+    '''Returns a trained Prophet model based on a train dataframe provided and a forecast dataframe of one year'''
+    model = Prophet()
+    model.fit(train_df)
+    future = model.make_future_dataframe(periods=(365+len(test_df)))
+    forecast_original = model.predict(future)
+    forecast_df = forecast_original[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
+
+    forecast_df.rename(columns={'ds':'Date',
+                                'yhat':'Forecast',
+                                'yhat_lower':'Lower Limit',
+                                'yhat_upper':'Upper Limit'}, inplace=True)
+    return model, forecast_df, forecast_original
+
+# Plot Forecast
+def plot_forecast(model, forecast):
+    fig = plot_plotly(model, forecast, xlabel='Date', ylabel='Price')
+    #test_trace = go.Scatter(x=test['ds'], y=test['y'], mode='markers', name='Test Set')
 
     return fig
