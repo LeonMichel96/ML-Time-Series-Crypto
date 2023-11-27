@@ -2,7 +2,7 @@ requests
 datetime
 pandas
 numpy
-eaborn
+seaborn
 prophet
 streamlit
 plotly
