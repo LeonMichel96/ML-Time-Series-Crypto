@@ -13,7 +13,7 @@ from plotly import graph_objects as go
 st.markdown("""
     # Cryptocurrency Prediction App
     ## Introduction
-    This app tends to deliver a prediction in time (one year in the future) for a selected Layer One cryptocurrency using a Machine Learning approach,
+    This app intends to deliver a prediction in time of prices (one year in the future) for a selected Layer One cryptocurrency using a Machine Learning approach,
     more specific, this app is using Facebook prediciton model for time series 'Prophet'. We are also using coingecko public API to get the data.
 """)
 st.write("  ")
