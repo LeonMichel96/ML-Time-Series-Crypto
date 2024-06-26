@@ -28,7 +28,7 @@ with st.form('Inputs'):
     st.write("  ")
 
     years = st.slider('''Select the number of years in the past you want to retrieve of price history, this will be used
-                        by the model to train itself and learn :''',1,4)
+                        by the model to train itself and learn :''',1,1)
 
     submitted = st.form_submit_button("Submit")
 
