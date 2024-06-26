@@ -1,8 +1,8 @@
 requests
 datetime
-pandas
-numpy
-seaborn
-prophet
+pandas==1.5.3
+numpy==1.21.4
+seaborn==0.12.0
+prophet==1.0
 streamlit
 plotly
