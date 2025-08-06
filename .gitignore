@@ -1,0 +1,12 @@
+.python-version
+.ipynb_checkpoints/
+__pycache__/
+venv/
+.env
+*.pyc
+.DS_Store
+data_sources/raw_files/
+data_sources/extracted_files/
+data/
+notebooks/
+img/
