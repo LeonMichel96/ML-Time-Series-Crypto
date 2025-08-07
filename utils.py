@@ -14,7 +14,7 @@ from prophet.plot import plot_plotly
 today = int(datetime.datetime.now().timestamp())
 
 # Get data function
-@st.cache
+@st.cache_data
 def get_data(url, params):
     ''' Returns a df from the coingecko API, url and params will be input from the user'''
     response = requests.get(url, params=params).json()
@@ -33,7 +33,14 @@ def cleaning(df):
 
 # Plot raw data function
 def plot_raw(df):
-    fig = px.scatter(df, x="Date", y="Price", title="Historic data")
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=df['Date'],
+        y=df['Price'],
+        mode='lines+markers',
+        name='Price'
+    ))
+
     # Add a slider to modify the x-axis (date)
     fig.update_layout(
         xaxis=dict(
@@ -63,7 +70,7 @@ def model_forecast(train_df, test_df):
     model.fit(train_df)
     future = model.make_future_dataframe(periods=(365+len(test_df)))
     forecast_original = model.predict(future)
-    forecast_df = forecast_original[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
+    forecast_df = forecast_original[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].copy()
 
     forecast_df.rename(columns={'ds':'Date',
                                 'yhat':'Forecast',
@@ -72,8 +79,62 @@ def model_forecast(train_df, test_df):
     return model, forecast_df, forecast_original
 
 # Plot Forecast
-def plot_forecast(model, forecast):
-    fig = plot_plotly(model, forecast, xlabel='Date', ylabel='Price')
-    #test_trace = go.Scatter(x=test['ds'], y=test['y'], mode='markers', name='Test Set')
+def plot_forecast(train, test, forecast):
+    fig = go.Figure()
+
+    # train trace
+    fig.add_trace(go.Scatter(
+        x=train['ds'],
+        y=train['y'],
+        mode= 'markers',
+        name= 'Train Set'
+    ))
+
+    # test trace
+    fig.add_trace(go.Scatter(
+        x=test['ds'],
+        y=test['y'],
+        mode= 'markers',
+        name= 'Test Set'
+    ))
+
+    # forecast trace
+    fig.add_trace(go.Scatter(
+        x=forecast['Date'],
+        y=forecast['Forecast'],
+        mode= 'lines',
+        name= 'Forecast'
+    ))
+
+    # Upper bound
+    fig.add_trace(go.Scatter(
+        x=forecast['Date'],
+        y=forecast['Upper Limit'],
+        mode='lines',
+        name='Upper Bound',
+        line=dict(width=0),  # invisible line
+        showlegend=False
+    ))
+
+#   Lower bound
+    fig.add_trace(go.Scatter(
+        x=forecast['Date'],
+        y=forecast['Lower Limit'],
+        mode='lines',
+        name='Confidence Interval',
+        fill='tonexty',  # fill area between this and last trace
+        fillcolor='rgba(19, 113, 255, 0.15)',
+        line=dict(width=0),  # invisible line
+    ))
+
+    fig.update_layout(
+        title = 'Forecast vs Actuals',
+        xaxis=dict(
+            rangeslider=dict(
+                visible=True,
+            ),
+            type="date"
+        )
+    )
 
     return fig

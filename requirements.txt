@@ -1,9 +1,10 @@
 requests
 datetime
-pandas==1.5.3
-numpy>=1.22.4,<1.24
+pandas
+numpy
 prophet
-protobuf==3.19.4
-seaborn==0.12.0
+protobuf
+seaborn
 streamlit
 plotly
+scikit-learn
