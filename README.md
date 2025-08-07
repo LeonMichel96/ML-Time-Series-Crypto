@@ -8,3 +8,6 @@ This project is an interactive tool designed to forecast the future price behavi
 - The **CoinGecko API** is queried to automatically retrieve the last year of daily historical prices.
 - The data is split: **90% is used for training and testing**, and the remaining portion is reserved for evaluation.
 - The model used for forecasting is **Facebook Prophet**, due to its ability to capture trends, seasonality, and anomalies in time series data.
+
+
+Link to web app : https://pq2afeeg7q9dfdvihzvrbd.streamlit.app/
